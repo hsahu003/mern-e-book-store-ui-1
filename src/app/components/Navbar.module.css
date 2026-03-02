@@ -48,6 +48,7 @@
     align-items: center;
     margin-right: 20px;
     cursor: pointer;
+    position: relative;
 }
 
 .menuItem:last-child{
@@ -65,4 +66,32 @@
     font-size: 14px;
     color: #555;
     text-decoration: none;
+}
+
+.dropdown {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    padding: 4px 0;
+    min-width: 180px;
+    z-index: 10;
+}
+
+.dropdownItem {
+    width: 100%;
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+}
+
+.dropdownItem:hover {
+    background-color: #f3f3f3;
 }

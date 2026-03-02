@@ -1,112 +1,153 @@
-"use client"
+"use client";
+
 import Navbar from '@/app/components/Navbar'
-import React, { useEffect } from 'react'
-import styles  from './KindleLibrary.module.css'
-import Image from 'next/image'
-import { FaBookOpen } from 'react-icons/fa'
-import { FaChevronRight, FaChevronDown } from 'react-icons/fa'
-import { MdBook } from 'react-icons/md'
-import { useRouter } from 'next/navigation'
+import React, { useEffect, useMemo, useState } from "react";
+import styles from "./KindleLibrary.module.css";
+import { FaBookOpen } from "react-icons/fa";
+import { FaChevronRight, FaChevronDown } from "react-icons/fa6";
+import { MdBook } from "react-icons/md";
+import { useRouter } from "next/navigation";
+const apiurl = process.env.NEXT_PUBLIC_API_URL
 
-    const page = () => {
+interface Book {
+    _id: string;
+    image: string;
+    title: string;
+    author: string;
+}
+
+const Page = () => {
       const router = useRouter();
-      const [show, setShow] = React.useState(false);
-      const [allBooks, setAllBooks] = React.useState([]);
-
-      const getData = ()  => {
-          const temp = [
-              {
-                  title: 'The Alchemist',
-                  image: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg',
-                  id: '1',
-                  author: 'Paulo Coelho'
-              },
-              {
-                  title: 'The Alchemist',
-                  image: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg',
-                  id: '2',
-                  author: 'Paulo Coelho'
-              },
-              {
-                  title: 'The Alchemist',
-                  image: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg',
-                  id: '3',
-                  author: 'Paulo Coelho'
-              }
-
-          ];
-
-          setAllBooks(temp);
-      }
+      const [show, setShow] = useState(false);
+      const [allBooks, setAllBooks] = useState<Book[]>([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState<string | null>(null);
+      const [searchQuery, setSearchQuery] = useState('');
+      const [sortBy, setSortBy] = useState<'recent' | 'title' | 'author'>('recent');
+      const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
       useEffect(() => {
-          getData();
-      }, []);
-      
+        const fetchAllBooks = async () => {
+          try {
+            const response = await fetch(apiurl + '/api/books/all');
+            if (!response.ok) {
+                  throw new Error("Failed to fetch books");
+            }
+
+            const data: Book[] = await response.json();
+            setAllBooks(data);
+            setLoading(false);
+          } catch (error) {
+            console.error('Error fetching books:', error);
+            const err = error as Error;
+            setError(err.message);
+            setLoading(false);
+          }
+        }
+        fetchAllBooks();
+      }, [])
+
+      const filteredAndSortedBooks = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+
+        let books = allBooks;
+
+        if (query) {
+          books = books.filter((book) => {
+            const title = book.title?.toLowerCase() ?? '';
+            const author = book.author?.toLowerCase() ?? '';
+            return title.includes(query) || author.includes(query);
+          });
+        }
+
+        if (sortBy === 'title') {
+          books = [...books].sort((a, b) =>
+            (a.title ?? '').localeCompare(b.title ?? ''),
+          );
+        } else if (sortBy === 'author') {
+          books = [...books].sort((a, b) =>
+            (a.author ?? '').localeCompare(b.author ?? ''),
+          );
+        }
+
+        return books;
+      }, [allBooks, searchQuery, sortBy]);
+
+      if (loading) {
+        return <p>Loading...</p>;
+      }
+      if (error) {
+        return <p>Error: {error}</p>;
+      }
+
       return (
         <div className={styles.main}>
-            <Navbar />
+            <Navbar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              viewMode={viewMode}
+              onViewChange={setViewMode}
+              onFilterToggle={() => setShow((prev) => !prev)}
+            />
             <div className={styles.row}>
                 <div className={styles.left}>
                     <div className={styles.menuMain}>
-                        <FaBookOpen className={styles.bookIcon} />
+                        <FaBookOpen className={styles.bookicon} />
                         <p>Library</p>
-                        {
-                          show ? (<FaChevronDown
-                            onClick={() => setShow(!show)}
-                            className={styles.toRight}
-                          /> 
-                        ) : (<FaChevronRight 
-                            onClick={() => setShow(!show)}
-                            className={styles.toRight}
-                          />
+                        {show ? (
+                            <FaChevronDown
+                                onClick={() => setShow(!show)}
+                                className={styles.toRight}
+                            />
+                        ) : (
+                            <FaChevronRight
+                                onClick={() => setShow(!show)}
+                                className={styles.toRight}
+                            />
                         )}
                     </div>
-                    {
-                      show &&
-                      <div className={styles.menuItems}>
-                         <span>All Title</span>
-                         <span>Books</span>
-                         <span>Comics</span>
-                         <span>Samples</span>
-                      </div>
-                    }
+                    {show && (
+                        <div className={styles.menuItems}>
+                            <span>All Titles</span>
+                            <span>Books</span>
+                            <span>Comics</span>
+                            <span>Samples</span>
+                        </div>
+                    )}
                     <div className={styles.menuMain}>
-                        <MdBook className={styles.bookIcon2} />
-                        <p>Notes and Highlights</p>
+                        <MdBook className={styles.bookicon2} />
+                        <p>Notes & Highlights</p>
                     </div>
-
                 </div>
                 <div className={styles.right}>
-                  <h1>Trending</h1>
-                  <div className={styles.books}>
-                    {allBooks.map((book:any) => (
-                      <div onClick={()=>{
-                        router.push(`/book/${book.id}`)
-                      }} key={book.id} className={styles.bookItem}>
-                           <Image 
-                              src={book.image} 
-                              alt={book.title} 
-                              className={styles.bookImage}
-                              width={100}
-                              height={150}
-                            />
-
-                            <div className={styles.bookDetails}>
-                                <h3 className={styles.bookTitle}>{book.title}</h3>
-                                <p className={styles.bookAuthor}>
-                                  {book.author}
-                                </p>
+                    <h1>Trending</h1>
+                    <div className={viewMode === 'grid' ? styles.books : styles.booksList}>
+                        {filteredAndSortedBooks.map((book) => (
+                            <div
+                                onClick={() => {
+                                    router.push(`/book/${book._id}`);
+                                }}
+                                key={book._id}
+                                className={viewMode === 'grid' ? styles.bookItem : styles.bookItemList}
+                            >
+                                <img
+                                    src={book.image}
+                                    alt={book.title}
+                                    className={viewMode === 'grid' ? styles.bookImage : styles.bookImageList}
+                                />
+                                <div className={viewMode === 'grid' ? styles.bookDetails : styles.bookDetailsList}>
+                                  <h3 className={styles.bookTitle}>{book.title}</h3>
+                                  <p className={styles.bookAuthor}>{book.author}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                  </div>
-                  <div>
-                  </div>
+                        ))}
+                    </div>
                 </div>
-            </div>    
+            </div>
         </div>
       )
-    }
-    
-    export default page
+}
+
+export default Page

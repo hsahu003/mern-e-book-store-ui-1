@@ -1,49 +1,75 @@
-"use client"
-import React from 'react'
-import Image from 'next/image'
-import Navbar from '@/app/components/Navbar'
-import styles from './Book.module.css'
-import { useParams } from "next/navigation"
-import { useRouter } from "next/navigation"
+"use client";
+import React, { useEffect, useState } from "react";
+import Navbar from "@/app/components/Navbar";
+import styles from "./Book.module.css";
+import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+const apiurl = process.env.NEXT_PUBLIC_API_URL
 
+interface Book {
+    _id: string;
+    image: string;
+    title: string;
+    author: string;
+    description: string;
+    price: string;
+    amazonLink: string;
+    pdf: string;
+  }
 
 const page = () => {
   const { bookid } = useParams();
-  const router = useRouter();
-  
-  const book = {
-    id: bookid,
-    Image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
-    description: "<p>This is a great book about programming</p>",
-    amazonBuyLink: "https://www.amazon.com/book",
-    title: "The Programming Book",
-    author: "John Doe",
-    price: 19.99
-  }
-  
-  return (
-    <div className={styles.main}>
-      <Navbar/>
-      <div className={styles.container}>
-          <div className={styles.imageContainer}>
-            <Image
-              src={book.Image}
-              alt={book.title}
-              width={500}
-              height={500}
-              className={styles.bookImage}
-            />
-          </div>
-          <div className={styles.details}>
-            <h1 className={styles.bookTitle}>{book.title}</h1>
-            <p className={styles.bookAuthor}>by {book.author}</p>
-            <div
-                className={styles.bookDescription}
-                dangerouslySetInnerHTML={{ __html: book.description }}
-            />
-            <p className={styles.bookPrice}>{book.price}</p>
+  const router = useRouter()
+  const [book, setBook] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-            <button className={styles.purchaseButton}
+  useEffect(() => {
+      const fetchBook = async () => {
+            try {
+                const response = await fetch(apiurl+`/api/books/${bookid}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch book data');
+                }
+                const data = await response.json();
+                setBook(data);
+                setLoading(false);
+            }
+            catch(err){
+                setError(err.message);
+                setLoading(false);
+            }
+        }
+        fetchBook();
+    }, [])
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
+
+  
+    return (
+        <div className={styles.main}>
+            <Navbar />
+            <div className={styles.container}>
+                <div className={styles.imageContainer}>
+                    <img src={book.image} alt={book.title} className={styles.bookImage} />
+                </div>
+                <div className={styles.details}>
+                    <h1 className={styles.bookTitle}>{book.title}</h1>
+                    <p className={styles.bookAuthor}>by {book.author}</p>
+                    <div
+                        className={styles.bookDescription}
+                        dangerouslySetInnerHTML={{ __html: book.description }}
+                    />
+
+                    <p className={styles.bookPrice}>{book.price}</p>
+
+                    <button className={styles.purchaseButton}
                         onClick={() => {
                                // add payment check here
 
@@ -51,12 +77,15 @@ const page = () => {
                                 // assuming already paid
                             router.push(`/read/${bookid}`)
                         }}
-            >Start Reading</button>
-            {/* <button className={styles.purchaseButton}>Buy on Amazon</button> */}
-          </div>
-      </div>
-    </div>
-  )
+                    >Start Reading</button>
+
+                    {/* <button className={styles.purchaseButton}>Buy on Amazon</button> */}
+
+                </div>
+            </div>
+
+        </div>
+    )
 }
 
 export default page
