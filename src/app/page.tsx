@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
 import Image from 'next/image'
 
-export const page = () => {
+const Page = () => {
   const router = useRouter()
   return (
     <div className={styles.c1}>
@@ -52,4 +52,4 @@ export const page = () => {
   )
 }
 
-export default page
+export default Page

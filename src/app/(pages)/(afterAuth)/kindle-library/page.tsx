@@ -7,6 +7,7 @@ import { FaBookOpen } from "react-icons/fa";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa6";
 import { MdBook } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 const apiurl = process.env.NEXT_PUBLIC_API_URL
 
 interface Book {
@@ -132,10 +133,12 @@ const Library = () => {
                                 key={book._id}
                                 className={viewMode === 'grid' ? styles.bookItem : styles.bookItemList}
                             >
-                                <img
-                                    src={book.image}
-                                    alt={book.title}
-                                    className={viewMode === 'grid' ? styles.bookImage : styles.bookImageList}
+                                <Image
+                                  src={book.image}
+                                  alt={book.title}
+                                  className={viewMode === 'grid' ? styles.bookImage : styles.bookImageList}
+                                  width={220}
+                                  height={320}
                                 />
                                 <div className={viewMode === 'grid' ? styles.bookDetails : styles.bookDetailsList}>
                                   <h3 className={styles.bookTitle}>{book.title}</h3>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Image from "next/image"
 import Styles from "./Signup.module.css"
@@ -19,14 +19,14 @@ const SignUp = () => {
       confirmpassword:""  
     });
   const router = useRouter(); 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const{name, email, password, confirmpassword} = formData;
 

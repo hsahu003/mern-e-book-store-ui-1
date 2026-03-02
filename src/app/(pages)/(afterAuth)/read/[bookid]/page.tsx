@@ -6,7 +6,6 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import Navbar from '@/app/components/Navbar'
 import styles from "./Read.module.css";
-import { useRouter } from "next/navigation"
 import { useParams } from "next/navigation"
 const apiurl = process.env.NEXT_PUBLIC_API_URL
 
@@ -22,34 +21,26 @@ const apiurl = process.env.NEXT_PUBLIC_API_URL
     }
 
   const Read = () => {
-    const router = useRouter();
     const { bookid } = useParams();
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-    const [book, setBook] = useState<Book | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     useEffect(() => {
-          const fetchBook = async () => {
-                try {
-                    const response = await fetch(apiurl+`/api/books/${bookid}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch book data');
-                    }
-                    const data = await response.json();
-                    setBook(data);
-                    setLoading(false);
-                    let url = 'http://localhost:5000/'+data.pdf
-                    setPdfUrl(url);
-                }
-                catch(err){
-                    setError(err.message);
-                    setLoading(false);
-                }
-            }
-            fetchBook();
-        }, [])
+      const fetchBook = async () => {
+        try {
+          const response = await fetch(apiurl + `/api/books/${bookid}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch book data");
+          }
+          const data: Book = await response.json();
+          const url = 'http://localhost:5000/' + data.pdf;
+          setPdfUrl(url);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchBook();
+    }, [bookid, apiurl]);
 
     return (
       <div className={styles.main}>
