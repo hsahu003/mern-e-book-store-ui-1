@@ -21,7 +21,7 @@ const apiurl = process.env.NEXT_PUBLIC_API_URL
       pdf: string;
     }
 
-  const Page = () => {
+  const Read = () => {
     const router = useRouter();
     const { bookid } = useParams();
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -73,4 +73,4 @@ const apiurl = process.env.NEXT_PUBLIC_API_URL
     )
   }
 
-export default Page
+export default Read

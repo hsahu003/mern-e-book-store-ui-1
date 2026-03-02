@@ -10,7 +10,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 console.log("url",apiUrl)
 
-const page = () => {
+const SignUp = () => {
 
   const [formData, setFormData] = useState({
       name: "",
@@ -90,4 +90,4 @@ const page = () => {
   )
 }
 
-export default page
+export default SignUp

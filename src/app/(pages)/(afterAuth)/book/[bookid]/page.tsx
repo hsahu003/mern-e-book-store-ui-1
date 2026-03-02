@@ -17,7 +17,7 @@ interface Book {
     pdf: string;
   }
 
-const page = () => {
+const Book = () => {
   const { bookid } = useParams();
   const router = useRouter()
   const [book, setBook] = useState<Book | null>(null);
@@ -88,4 +88,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Book

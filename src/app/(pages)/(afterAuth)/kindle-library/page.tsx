@@ -16,7 +16,7 @@ interface Book {
     author: string;
 }
 
-const Page = () => {
+const Library = () => {
       const router = useRouter();
       const [show, setShow] = useState(false);
       const [allBooks, setAllBooks] = useState<Book[]>([]);
@@ -150,4 +150,4 @@ const Page = () => {
       )
 }
 
-export default Page
+export default Library
