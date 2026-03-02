@@ -1,0 +1,63 @@
+.signInContainer{
+    width: 300px;
+    margin: 10px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.logo{
+    margin-bottom: 20px;
+    object-fit: contain;
+}
+
+.signInContainer h1{
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.signInContainer form{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.signInContainer label{
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.signInContainer .fp{
+    color: #007185;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: normal;
+    text-decoration: none;
+    float: right;
+}
+
+.signInContainer input{
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.signInButton{
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f0c14b;
+    border: 1px solid;
+    border-color: #a88734 #9c7e31 #846a29;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dontHaveAccount{
+    margin-top: 10px;
+    font-size: 12px;
+}
